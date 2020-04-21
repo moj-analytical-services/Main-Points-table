@@ -1,0 +1,157 @@
+---
+title: "Main Points table"
+author: "Mark Ranganathan"
+date: "23/04/2020"
+output: 
+  word_document:
+    reference_docx: template.docx
+---
+
+```{r packages, echo = FALSE, message=FALSE}
+library('mojrap')
+library('pander')
+library('stringr')
+```
+
+```{r variables, echo = FALSE, message=FALSE}
+
+##Main Point 1: Overall
+overall_cq <- round(28.7, digits = 1)
+overall_py <- round(28.7, digits = 1)
+overall_vc <- overall_cq - overall_py
+overall_id <- incdec(overall_vc, "singular")
+
+overall_min <- format(28.7, nsmall = 1)
+overall_max <- format(31.8, nsmall = 1)
+
+
+##Main Point 2: Adult
+adult_cq <- round(28.0, digits = 1)
+adult_py <- round(28.4, digits = 1)
+adult_vc <- adult_cq - adult_py
+adult_id <- incdec(adult_vc, "singular")
+
+adult_min <- format(28.0, nsmall = 1)
+adult_max <- format(30.6, nsmall = 1)
+
+
+##Main Point 3: Juvenile
+juv_cq <- round(39.9, digits = 1)
+juv_py <- round(39.2, digits = 1)
+juv_vc <- juv_cq - juv_py
+juv_id <- incdec(juv_vc, "past")
+
+juv_min <- format(36.3, nsmall = 1)
+juv_max <- format(43.6, nsmall = 1)
+
+juv_off <- 6694
+juv_2006 <- 51732
+juv_trend <- ((juv_off - juv_2006) / juv_2006) * 100
+
+
+##Main Point 4: Custody or Court Orders
+cco_cq <- round(36.7, digits = 1)
+cco_py <- round(37.6, digits = 1)
+cco_vc <- cco_cq - cco_py
+cco_id <- incdec(cco_vc, "singular")
+
+cco_2011 <- round(39.9, digits = 1)
+cco_2011vc <- cco_cq - cco_2011
+cco_2011id <- incdec(cco_vc, "singular")
+
+cco_min <- format(36.3, nsmall = 1)
+cco_max <- format(42.9, nsmall = 1)
+
+
+##Main Point 5: Adult Custody
+less12_cq <- round(62.7, digits = 1)
+less12_py <- round(64.2, digits = 1)
+less12_vc <- less12_cq - less12_py
+less12_id <- incdec(less12_vc, "singular")
+
+less6_cq <- round(64.8, digits = 1)
+less6_py <- round(66.8, digits = 1)
+less6_vc <- less6_cq - less6_py
+less6_id <- incdec(less6_vc, "singular")
+
+
+##Current quarter
+cq <- "January to March 2018"
+
+##Current year
+cy <- as.numeric(substr(cq, nchar(cq) - 4, nchar(cq)))
+
+##Previous year
+py <- cy - 1
+```
+
+```{r arrow, echo = FALSE}
+
+##Creates arrow_image function. This will output an image of an upwards, downwards or no change arrow depending on the number (usually the difference between the current value and the same one in the previous year) that was input.
+arrow_image <- function(x){
+  
+  if (x > 0){
+    
+    stringr::str_c("![](upfront.png)")
+    
+  } 
+  else if (x < 0){
+    
+    stringr::str_c("![](downfront.png)")
+    
+  } 
+  else {
+    
+    stringr::str_c("![](nochangefront.png)")
+    
+  }
+  
+}
+
+```
+
+```{r main, echo = FALSE}
+
+## Main points and their corresponding descriptions.
+MainPoint1 <- paste0("The overall proven reoffending rate was ", format(overall_cq, nsmall = 1),"% for the ",cq," offender cohort")
+Desc1 <- paste0("This represents no change from the same quarter in ", py, ". While this is the lowest reoffending rate in the twelve-year timeseries, the rate has remained broadly flat over time, fluctuating between ", overall_min, "% and ", overall_max, "% over that period.")
+
+MainPoint2 <- paste0("Adult offenders had a proven reoffending rate of ", format(adult_cq, nsmall = 1), "%")
+Desc2 <- paste0("This is a ", adult_id ," of ", format(abs(adult_vc), nsmall = 1), " percentage points since the same quarter in ", py ,". While this represents the lowest rate in the twelve-year timeseries, it has remained broadly flat over time, fluctuating between ", adult_min, "% and ", adult_max, "%.")
+
+MainPoint3 <- paste0("Juvenile offenders had a proven reoffending rate of ", format(juv_cq, nsmall = 1), "%")
+Desc3 <- paste0("The juvenile reoffending rate ", juv_id, " ", format(abs(juv_vc), nsmall = 1) , " percentage points since the same quarter in the previous year. Over the years, the rate has fluctuated between ",juv_min, "% and ", juv_max, "%. However, for context, the number of offenders in the cohort has fallen by ", abs(round(juv_trend, digits = 0)), "% since April to June 2006 creating a more volatile series.")
+
+MainPoint4 <- paste0("Adults released from custody or starting court orders had a proven reoffending rate of ", format(cco_cq, nsmall = 1), "%")
+Desc4 <- paste0("This represents a ", format(abs(cco_vc), nsmall = 1) , " percentage point ", cco_id, " since the same quarter in the previous year and a ", cco_2011id, " of ", format(abs(cco_2011vc), nsmall = 1) , " percentage points since the same quarter in 2011. The rates have fluctuated between ",cco_min, "% and ", cco_max, "% since 2006, with a more gradual decrease seen in recent years.")
+
+MainPoint5 <- paste0("Adults released from custodial sentences of less than 12 months had a proven reoffending rate of ", less12_cq, "%")
+Desc5 <- paste0("This is a ", less12_id, " of ", format(abs(less12_vc), nsmall = 1) , " percentage points from the same quarter in the previous year. Those released from sentences of less than or equal to 6 months had a proven reoffending rate of ", less6_cq, "%, which is also a ", less6_id, " of ", format(abs(less6_vc), nsmall = 1) , " percentage points, since the same quarter in the previous year.")
+
+
+## Columns of the main points table
+left <- c(MainPoint1,
+          MainPoint2,
+          MainPoint3,
+          MainPoint4,
+          MainPoint5)
+middle <- c(arrow_image(overall_vc),
+            arrow_image(adult_vc),
+            arrow_image(juv_vc),
+            arrow_image(cco_vc),
+            arrow_image(less12_vc))
+
+right <- c(Desc1,
+           Desc2,
+           Desc3,
+           Desc4,
+           Desc5)
+
+##Joining the left, middle and right columns together
+wit <- data.frame(left, middle, right)
+colnames(wit) <- NULL # We don't want column titles
+
+```
+
+`r pander(wit, style = "multiline", emphasize.strong.cols = 1, justify = c('left', 'center', 'left'), border = 0, split.cells = c(20, 3, 20))`
+
